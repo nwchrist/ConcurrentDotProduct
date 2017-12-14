@@ -1,0 +1,85 @@
+/* ------------------------------------------------------------------
+ * Author: Nicholas Christensen					User ID: nwchrist
+ * Due Date: 12/13/2017
+ * Class: CS3331
+ * Program Assignment #6
+ * File Name: README
+ * File Purpose:
+ * 		This file is the README for program 6.
+ * ------------------------------------------------------------------  */
+ 
+ 1.
+		The basic idea of this program is that the main thread creates
+		a matrix of processes, with one header process for the top and
+		left edge of the matrix. The main program also creates a channel
+		to connect each thread to every other adjacent thread. Then the
+		header processes feed in the data from two matrices to their
+		processes which then multiply them together and save the result
+		each time they get a new piece of data. Once each header file
+		has passed all of the data from its row or column, each process
+		will be holding the dot product result of the two matrices.
+		
+2.
+		My program works because I utilize synchronous channels stored
+		in two 2D, arrays one for the horizontal channels and one for the
+		vertical channels, along with a threadID system that maps each
+		thread to channels in the 2D array. This makes passing specific
+		channels manageable when coupled with a 2D array for the processes.
+		
+3.
+		The basic processes each have four channel pointers, which are
+		set equal to the pointers passed to them during construction by
+		the main program. These channel pointers are used by the processes
+		to send and receive their messages. The basic processes also have
+		an int Number that is used to store the value of their memorized
+		number, and is initially set to 0, as that is correct for the math.
+		The basic processes also have an int threadID that is used to store
+		the ID of the int for use in channels and organization, this int is
+		assigned by the main program during construction. Finally, the basic
+		processes have an int** Matrix that is passed to them by the main program
+		and is simply a matrix for the processes to store their final results in.
+		Similar to the basic processes the header threads also have a threadID
+		that is used for channels and organization. Header threads also have an
+		int Iterations that is passed to it by the main program and tells the 
+		thread how many numbers to read in before passing EOD. Iterations is
+		based off of the number of rows or columns in the input matrices.
+		Header threads have an int** dataMatrix that is passed to them by
+		the main program and either contains matrix A or B information that
+		the thread will need to read off from. Lastly, the header threads
+		have a channel that is passed to them by the main program and lets
+		them communicate with their assigned base process.
+		
+4.
+		The definition of dot product for position Ci,j is to multiply and
+		add all the values of Ai and Bj. Since our program is following that
+		definition exactly, we correctly compute the dot product of A and B.
+		
+5.
+		Synchronous channels are easier to use than asynchronous channels.
+		Synchronous channels make sure that each of our processes is not
+		missing any messages, or moving onto the next portion of its code
+		without reading a message. This helps to reduce race conditions
+		and make the program more robust. You could however write this program
+		using asynchronous channels if you wanted to.
+		
+6.
+		Yes, since the processes waits until it gets an EOD from its top and
+		left neighbor the processes will end in a pattern that starts on the
+		top and left edges and moves toward the bottom right.
+		
+	EOD	EOD EOD EOD    EOD EOD EOD EOD    EOD EOD EOD EOD    EOD EOD EOD EOD
+	EOD	RUN RUN RUN -> EOD EOD EOD EOD -> EOD EOD EOD EOD -> EOD EOD EOD EOD
+	EOD	RUN RUN RUN    EOD EOD RUN RUN    EOD EOD EOD EOD    EOD EOD EOD EOD
+	EOD RUN RUN RUN    EOD EOD RUN RUN    EOD EOD EOD RUN    EOD EOD EOD EOD
+	
+7.
+		Yes. In my program the processes read in data from their top neighbor
+		and bottom neighbor at the same time. Therefore if they receive an EOD
+		from their left or top neighbor than that means their other neighbor 
+		will be sending an EOD next as well. Therefore, if the program receives
+		and EOD from either neighbor and then terminates, the correct results
+		will still be delivered.
+	
+	
+	
+		
